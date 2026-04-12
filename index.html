@@ -6,33 +6,48 @@
 <title>Generador de Manifest</title>
 
 <style>
+/* 💻 PC (por defecto) */
 body {
-  background: url("https://i.imgur.com/z4guq1U.jpeg") no-repeat center center fixed;
+  background: url("https://i.imgur.com/z4guq1U.jpeg") no-repeat center center;
   background-size: cover;
-  color:white;
-  font-family:Arial;
-  text-align:center;
-  padding:20px;
+  background-attachment: fixed;
+  color: rgba(255,255,255,0);
+  font-family: Arial;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
 }
 
+/* 📱 MÓVIL */
+@media (max-width: 600px) {
+  body {
+    background: url("https://i.imgur.com/tdiVvNP.jpeg") no-repeat center top;
+    background-size: cover;
+    background-attachment: scroll; /* 🔥 evita bug en celular */
+  }
+}
 
 .container {
   max-width:500px;
   margin:auto;
 }
 
-input, select, button {
-  width:100%;
-  margin:8px 0;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  font-size:16px;
+select {
+  width: 100%;
+  padding: 12px;
+  background: transparent; 
+  border: 2px solid #680885;
+  color: #00fbff;
+  border-radius: 8px;
+  outline: none;
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 button {
   background:#680885;
-  color:white;
+  color:#00fbff;
   font-weight:bold;
 }
 
@@ -40,7 +55,7 @@ textarea {
   width:100%;
   height:300px;
   margin-top:15px;
-  background:black;
+  background:rgba(0, 255, 247, 0.549);
   color:#680885;
   padding:10px;
   border-radius:8px;
@@ -58,6 +73,61 @@ textarea {
 .actions button {
   flex:1;
 }
+
+/* 🔥 INPUTS ANIMADOS */
+.inputBox {
+  position: relative;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.inputBox input {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 2px solid #c800ff;
+  color: #a200ff;
+  border-radius: 8px;
+  outline: none;
+}
+
+.inputBox span {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00fbff;
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+/* ANIMACIÓN */
+.inputBox input:focus ~ span,
+.inputBox input:valid ~ span {
+  top: -8px;
+  font-size: 12px;
+  background: #1e1e1e00;
+  padding: 0 5px;
+  color: #00fbff;
+}
+
+.checkboxBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  justify-content: flex-start;
+}
+
+.checkboxBox input {
+  width: auto; /* 🔥 importante */
+}
+
+.checkboxBox label {
+  cursor: pointer;
+  color: #00fbff;
+  font-size: 14px;
+}
 </style>
 </head>
 
@@ -67,28 +137,73 @@ textarea {
 
 <h2>Generador de Manifest</h2>
 
-<input id="name" placeholder="Nombre del Addon o Textura">
-<input id="desc" placeholder="Descripción">
-<input id="author" placeholder="Autor">
+<div class="inputBox">
+  <input id="name" required>
+  <span>Nombre del Addon</span>
+</div>
 
-<input id="version" placeholder="Versión (ej: 1.0.0) - opcional">
+<div class="inputBox">
+  <input id="desc" required>
+  <span>Descripción</span>
+</div>
+
+<div class="inputBox">
+  <input id="author" required>
+  <span>Autor</span>
+</div>
+
+<div class="inputBox">
+  <input id="version" required>
+  <span>Versión (ej: 1.0.0) - opcional</span>
+</div>
+
+<div class="inputBox">
+  <input id="rpUUID" required>
+  <span>UUID de Dependencia</span>
+</div>
 
 <select id="type" onchange="toggleScripts()">
   <option value="rp">Resource Pack</option>
   <option value="bp">Behavior Pack</option>
 </select>
 
-<div id="scriptsContainer">
-  <label>
-    <input type="checkbox" id="scripts" onchange="toggleScriptName()"> Agregar Scripts (selecciona si tu addon usa scripts)
+<div id="scriptsContainer" class="checkboxBox">
+  <input type="checkbox" id="scripts" onchange="toggleScriptName()">
+  <label for="scripts">
+    Agregar Scripts (selecciona si tu addon usa scripts)
+  </label>
+</div>
+<div id="subpacksContainer" class="checkboxBox">
+  <input type="checkbox" id="useSubpacks" onchange="toggleSubpacks()">
+  <label for="useSubpacks">
+    Agregar Subpacks
   </label>
 </div>
 
+<div id="subpackInputs" style="display:none;">
 
-<div id="scriptNameContainer">
-  <input id="scriptName" placeholder="Nombre del script (ej: main.js)">
+  <div class="inputBox">
+    <input id="subpack1_name">
+    <span>Nombre del Subpack (ej: Chest)</span>
+  </div>
+
+  <div class="inputBox">
+    <input id="subpack1_folder">
+    <span>Folder Name (ej: chest)</span>
+  </div>
+
+  <div class="inputBox">
+    <input id="subpack1_memory">
+    <span>Memory Tier (0 o 1)</span>
+  </div>
+
 </div>
 
+
+<div id="scriptNameContainer" class="inputBox">
+  <input id="scriptName" required>
+  <span>Nombre del script (ej: main.js)</span>
+</div>
 <button onclick="generate()">Generar</button>
 
 <div class="actions">
@@ -140,22 +255,20 @@ function generate() {
   const type = document.getElementById("type").value;
   const useScripts = document.getElementById("scripts").checked;
 
-let scriptName = document.getElementById("scriptName").value.trim();
+  const rpUUID = document.getElementById("rpUUID").value.trim();
 
-if (!scriptName) {
-  scriptName = "main.js";
-} else {
+  let scriptName = document.getElementById("scriptName").value.trim();
 
-  if (!scriptName.endsWith(".js")) {
+  if (!scriptName) {
+    scriptName = "main.js";
+  } else if (!scriptName.endsWith(".js")) {
     scriptName += ".js";
   }
-}
 
   const version = parseVersion(versionInput);
 
   const headerUUID = uuid();
   const moduleUUID = uuid();
-  const dependencyUUID = uuid();
 
   let manifest = {
     format_version: 2,
@@ -165,25 +278,32 @@ if (!scriptName) {
       uuid: headerUUID,
       version: version,
       min_engine_version: [1,20,80]
-    },
-    metadata: {
-      authors: [author],
-      product_type: type === "bp" ? "addon" : "texture"
     }
   };
 
-  if (type === "rp") {
-    manifest.modules = [
-      {
-        type: "resources",
-        uuid: moduleUUID,
-        version: version
-      }
-    ];
-  }
+  // RESOURCE PACK
+if (type === "rp") {
+  manifest.modules = [
+    {
+      type: "resources",
+      uuid: moduleUUID,
+      version: version
+    }
+  ];
 
+  // 🔥 DEPENDENCIES TAMBIÉN EN RP
+  manifest.dependencies = [
+    {
+      uuid: document.getElementById("rpUUID").value.trim() || "",
+      version: version
+    }
+  ];
+}
+
+  // BEHAVIOR PACK
   if (type === "bp") {
 
+    // modules
     if (!useScripts) {
       manifest.modules = [
         {
@@ -192,9 +312,7 @@ if (!scriptName) {
           version: version
         }
       ];
-    }
-
-    if (useScripts) {
+    } else {
       manifest.modules = [
         {
           description: "JavaScript module",
@@ -202,32 +320,48 @@ if (!scriptName) {
           language: "javascript",
           uuid: moduleUUID,
           version: version,
-          entry: scriptName 
-        }
-      ];
-
-      manifest.dependencies = [
-        {
-          module_name: "@minecraft/server",
-          version: "1.11.0"
-        },
-        {
-          uuid: dependencyUUID,
-          version: version
+          entry: scriptName
         }
       ];
     }
+
+    // 🔥 DEPENDENCIES SIEMPRE ACTIVAS
+    manifest.dependencies = [];
+
+    // 👉 scripts (si existen)
+    if (useScripts) {
+      manifest.dependencies.push({
+        module_name: "@minecraft/server",
+        version: "1.11.0"
+      });
+    }
+
+    // 👉 RP UUID (aunque esté vacío)
+    manifest.dependencies.push({
+      uuid: rpUUID || "",
+      version: version
+    });
+
   }
+
+if (document.getElementById("useSubpacks").checked) {
+  manifest.subpacks = [
+    {
+      folder_name: document.getElementById("subpack1_folder").value || "default",
+      memory_tier: parseInt(document.getElementById("subpack1_memory").value) || 0,
+      name: document.getElementById("subpack1_name").value || "Subpack"
+    }
+  ];
+}
+
+  // 🔥 METADATA SIEMPRE AL FINAL
+  manifest.metadata = {
+    authors: [author],
+    product_type: type === "bp" ? "addon" : "texture"
+  };
 
   document.getElementById("output").value =
     JSON.stringify(manifest, null, 2);
-}
-
-function copyJSON() {
-  navigator.clipboard.writeText(
-    document.getElementById("output").value
-  );
-  alert("JSON copiado");
 }
 
 function downloadJSON() {
