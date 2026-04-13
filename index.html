@@ -67,8 +67,17 @@ body {
   margin: 10px 0;
 }
 
+.checkboxBox span {
+  color: #00fbff;
+}
+
 .checkboxBox input {
   width: auto; /* 🔥 importante */
+}
+
+.checkboxBox input:checked ~ span {
+  color: #c800ff;
+  text-shadow: 0 0 5px #c800ff;
 }
 
 .checkboxBox label {
@@ -152,10 +161,10 @@ h2 {
 </select>
 
 <!-- DEPENDENCY -->
-<div class="checkboxBox">
+<label class="checkboxBox">
   <input type="checkbox" id="useDependency" onchange="toggleDependency()">
-  <label>Agregar dependencia</label>
-</div>
+  <span>Agregar dependencia</span>
+</label>
 
 <div id="dependencyInput" class="inputBox">
   <input id="rpUUID" placeholder=" ">
@@ -163,10 +172,10 @@ h2 {
 </div>
 
 <!-- SCRIPTS -->
-<div id="scriptsContainer" class="checkboxBox">
+<label id="scriptsContainer" class="checkboxBox">
   <input type="checkbox" id="scripts" onchange="toggleScriptName()">
-  <label>Agregar Scripts</label>
-</div>
+  <span>Agregar Scripts</span>
+</label>
 
 <div id="scriptNameContainer" class="inputBox">
   <input id="scriptName" placeholder=" ">
@@ -174,10 +183,10 @@ h2 {
 </div>
 
 <!-- SUBPACKS -->
-<div class="checkboxBox">
+<label class="checkboxBox">
   <input type="checkbox" id="useSubpacks" onchange="toggleSubpacks()">
-  <label>Agregar Subpacks</label>
-</div>
+  <span>Agregar Subpacks</span>
+</label>
 
 <div id="subpackInputs">
   <div class="inputBox">
