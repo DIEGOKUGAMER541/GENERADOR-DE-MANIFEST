@@ -32,7 +32,7 @@ body {
 
 .inputBox {
   position: relative;
-  margin: 12px 0;
+  margin: 18px 0;
 }
 
 .inputBox input {
@@ -339,6 +339,37 @@ function generate(){
 
   document.getElementById("output").value =
     JSON.stringify(manifest,null,2);
+}
+
+function copyJSON() {
+  const text = document.getElementById("output").value;
+
+  if (!text) {
+    alert("Primero genera el manifest");
+    return;
+  }
+
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      alert("Manifest copiado al portapapeles");
+    })
+    .catch(() => {
+      // fallback por si el navegador bloquea clipboard
+      const textarea = document.getElementById("output");
+      textarea.select();
+      document.execCommand("copy");
+      alert("Copiado (modo compatibilidad)");
+    });
+}
+
+function downloadJSON() {
+  const text = document.getElementById("output").value;
+  const blob = new Blob([text], { type: "application/json" });
+  const a = document.createElement("a");
+
+  a.href = URL.createObjectURL(blob);
+  a.download = "manifest.json";
+  a.click();
 }
 </script>
 
