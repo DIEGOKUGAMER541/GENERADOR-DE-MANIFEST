@@ -6,88 +6,41 @@
 <title>Generador de Manifest</title>
 
 <style>
-/* 💻 PC (por defecto) */
 body {
   background: url("https://i.imgur.com/z4guq1U.jpeg") no-repeat center center;
   background-size: cover;
   background-attachment: fixed;
-  color: rgba(255,255,255,0);
   font-family: Arial;
   text-align: center;
   padding: 20px;
   margin: 0;
 }
 
-/* 📱 MÓVIL */
 @media (max-width: 600px) {
   body {
     background: url("https://i.imgur.com/tdiVvNP.jpeg") no-repeat center center;
     background-size: cover;
-    background-attachment: scroll; /* 🔥 evita bug en celular */
+    background-attachment: scroll;
     min-height: 100vh;
   }
 }
 
 .container {
-  max-width:500px;
-  margin:auto;
+  max-width: 500px;
+  margin: auto;
 }
 
-select {
-  width: 100%;
-  padding: 12px;
-  background: transparent; 
-  border: 2px solid #680885;
-  color: #00fbff;
-  border-radius: 8px;
-  outline: none;
-  appearance: none; 
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
-button {
-  background:#680885;
-  color:#00fbff;
-  font-weight:bold;
-}
-
-textarea {
-  width:100%;
-  height:300px;
-  margin-top:15px;
-  background:rgba(0, 255, 247, 0.549);
-  color:#680885;
-  padding:10px;
-  border-radius:8px;
-}
-
-#scriptsContainer,
-#scriptNameContainer {
-  display:none;
-}
-
-.actions {
-  display:flex;
-  gap:10px;
-}
-.actions button {
-  flex:1;
-}
-
-/* 🔥 INPUTS ANIMADOS */
 .inputBox {
   position: relative;
-  width: 100%;
   margin: 12px 0;
 }
 
 .inputBox input {
   width: 100%;
   padding: 12px;
-  background: transparent;
+  background: #c800ff;
   border: 2px solid #c800ff;
-  color: #a200ff;
+  color: #00fbff;
   border-radius: 8px;
   outline: none;
 }
@@ -98,18 +51,13 @@ textarea {
   top: 50%;
   transform: translateY(-50%);
   color: #00fbff;
-  pointer-events: none;
   transition: 0.3s;
 }
 
-/* ANIMACIÓN */
 .inputBox input:focus ~ span,
-.inputBox input:valid ~ span {
+.inputBox input:not(:placeholder-shown) ~ span {
   top: -8px;
   font-size: 12px;
-  background: #1e1e1e00;
-  padding: 0 5px;
-  color: #00fbff;
 }
 
 .checkboxBox {
@@ -117,7 +65,6 @@ textarea {
   align-items: center;
   gap: 10px;
   margin: 10px 0;
-  justify-content: flex-start;
 }
 
 .checkboxBox input {
@@ -129,6 +76,47 @@ textarea {
   color: #00fbff;
   font-size: 14px;
 }
+
+select {
+  width: 100%;
+  padding: 12px;
+  background: #c800ff;
+  border: 2px solid #680885;
+  color: #00fbff;
+  border-radius: 8px;
+}
+
+button {
+  background:#680885;
+  color:#00fbff;
+  font-weight:bold;
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+textarea {
+  width:100%;
+  height:300px;
+  margin-top:15px;
+  background:rgb(0, 255, 247);
+  color:#680885;
+  padding:10px;
+  border-radius:8px;
+}
+
+h2 {
+  color: #00fbff;
+}
+
+#scriptsContainer,
+#scriptNameContainer,
+#dependencyInput,
+#subpackInputs {
+  display:none;
+}
 </style>
 </head>
 
@@ -139,28 +127,23 @@ textarea {
 <h2>Generador de Manifest</h2>
 
 <div class="inputBox">
-  <input id="name" required>
-  <span>Nombre del Addon</span>
+  <input id="name" placeholder=" ">
+  <span>Nombre del Addon o Textura</span>
 </div>
 
 <div class="inputBox">
-  <input id="desc" required>
+  <input id="desc" placeholder=" ">
   <span>Descripción</span>
 </div>
 
 <div class="inputBox">
-  <input id="author" required>
+  <input id="author" placeholder=" ">
   <span>Autor</span>
 </div>
 
 <div class="inputBox">
-  <input id="version" required>
-  <span>Versión (ej: 1.0.0) - opcional</span>
-</div>
-
-<div class="inputBox">
-  <input id="rpUUID" required>
-  <span>UUID de Dependencia</span>
+  <input id="version" placeholder=" ">
+  <span>Versión (1.0.0)</span>
 </div>
 
 <select id="type" onchange="toggleScripts()">
@@ -168,43 +151,51 @@ textarea {
   <option value="bp">Behavior Pack</option>
 </select>
 
+<!-- DEPENDENCY -->
+<div class="checkboxBox">
+  <input type="checkbox" id="useDependency" onchange="toggleDependency()">
+  <label>Agregar dependencia</label>
+</div>
+
+<div id="dependencyInput" class="inputBox">
+  <input id="rpUUID" placeholder=" ">
+  <span>UUID de Dependencia</span>
+</div>
+
+<!-- SCRIPTS -->
 <div id="scriptsContainer" class="checkboxBox">
   <input type="checkbox" id="scripts" onchange="toggleScriptName()">
-  <label for="scripts">
-    Agregar Scripts (selecciona si tu addon usa scripts)
-  </label>
+  <label>Agregar Scripts</label>
 </div>
-<div id="subpacksContainer" class="checkboxBox">
-  <input type="checkbox" id="useSubpacks" onchange="toggleSubpacks()">
-  <label for="useSubpacks">
-    Agregar Subpacks
-  </label>
-</div>
-
-<div id="subpackInputs" style="display:none;">
-
-  <div class="inputBox">
-    <input id="subpack1_name">
-    <span>Nombre del Subpack (ej: Chest)</span>
-  </div>
-
-  <div class="inputBox">
-    <input id="subpack1_folder">
-    <span>Folder Name (ej: chest)</span>
-  </div>
-
-  <div class="inputBox">
-    <input id="subpack1_memory">
-    <span>Memory Tier (0 o 1)</span>
-  </div>
-
-</div>
-
 
 <div id="scriptNameContainer" class="inputBox">
-  <input id="scriptName" required>
-  <span>Nombre del script (ej: main.js)</span>
+  <input id="scriptName" placeholder=" ">
+  <span>Nombre del script</span>
 </div>
+
+<!-- SUBPACKS -->
+<div class="checkboxBox">
+  <input type="checkbox" id="useSubpacks" onchange="toggleSubpacks()">
+  <label>Agregar Subpacks</label>
+</div>
+
+<div id="subpackInputs">
+  <div class="inputBox">
+    <input id="subpack1_name" placeholder=" ">
+    <span>Nombre</span>
+  </div>
+
+  <div class="inputBox">
+    <input id="subpack1_folder" placeholder=" ">
+    <span>Folder</span>
+  </div>
+
+  <div class="inputBox">
+    <input id="subpack1_memory" placeholder=" ">
+    <span>Memory Tier</span>
+  </div>
+</div>
+
 <button onclick="generate()">Generar</button>
 
 <div class="actions">
@@ -219,8 +210,8 @@ textarea {
 <script>
 function uuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    const r = Math.random()*16|0;
+    const v = c === 'x' ? r : (r&0x3|0x8);
     return v.toString(16);
   });
 }
@@ -228,151 +219,126 @@ function uuid() {
 function toggleScripts() {
   const type = document.getElementById("type").value;
   document.getElementById("scriptsContainer").style.display =
-    (type === "bp") ? "block" : "none";
-
-  if (type !== "bp") {
-    document.getElementById("scriptNameContainer").style.display = "none";
-  }
+    (type === "bp") ? "flex" : "none";
 }
 
 function toggleScriptName() {
-  const checked = document.getElementById("scripts").checked;
   document.getElementById("scriptNameContainer").style.display =
-    checked ? "block" : "none";
+    document.getElementById("scripts").checked ? "block" : "none";
 }
 
-function parseVersion(input) {
-  if (!input) return [1,0,0];
-  const parts = input.split(".").map(n => parseInt(n));
-  if (parts.length !== 3 || parts.some(isNaN)) return [1,0,0];
-  return parts;
+function toggleDependency() {
+  document.getElementById("dependencyInput").style.display =
+    document.getElementById("useDependency").checked ? "block" : "none";
 }
 
-function generate() {
+function toggleSubpacks() {
+  document.getElementById("subpackInputs").style.display =
+    document.getElementById("useSubpacks").checked ? "block" : "none";
+}
+
+function parseVersion(v){
+  if(!v) return [1,0,0];
+  return v.split(".").map(n=>parseInt(n)||0);
+}
+
+function generate(){
+
   const name = document.getElementById("name").value;
   const desc = document.getElementById("desc").value;
   const author = document.getElementById("author").value;
-  const versionInput = document.getElementById("version").value;
+  const version = parseVersion(document.getElementById("version").value);
+
   const type = document.getElementById("type").value;
   const useScripts = document.getElementById("scripts").checked;
-
-  const rpUUID = document.getElementById("rpUUID").value.trim();
-
-  let scriptName = document.getElementById("scriptName").value.trim();
-
-  if (!scriptName) {
-    scriptName = "main.js";
-  } else if (!scriptName.endsWith(".js")) {
-    scriptName += ".js";
-  }
-
-  const version = parseVersion(versionInput);
-
-  const headerUUID = uuid();
-  const moduleUUID = uuid();
+  const useDependency = document.getElementById("useDependency").checked;
+  const rpUUIDValue = document.getElementById("rpUUID").value.trim();
 
   let manifest = {
     format_version: 2,
     header: {
-      name: name,
-      description: desc,
-      uuid: headerUUID,
-      version: version,
+      name, description: desc,
+      uuid: uuid(),
+      version,
       min_engine_version: [1,20,80]
-    }
+    },
+    modules: []
   };
 
-  // RESOURCE PACK
-if (type === "rp") {
-  manifest.modules = [
-    {
-      type: "resources",
-      uuid: moduleUUID,
-      version: version
+  const moduleUUID = uuid();
+
+  // RP
+  if(type==="rp"){
+    manifest.modules.push({
+      type:"resources",
+      uuid:moduleUUID,
+      version
+    });
+
+    if(useDependency){
+      manifest.dependencies=[{
+        uuid: rpUUIDValue || "",
+        version
+      }];
     }
-  ];
+  }
 
-  // 🔥 DEPENDENCIES TAMBIÉN EN RP
-  manifest.dependencies = [
-    {
-      uuid: document.getElementById("rpUUID").value.trim() || "",
-      version: version
-    }
-  ];
-}
+  // BP
+  if(type==="bp"){
 
-  // BEHAVIOR PACK
-  if (type === "bp") {
-
-    // modules
-    if (!useScripts) {
-      manifest.modules = [
-        {
-          type: "data",
-          uuid: moduleUUID,
-          version: version
-        }
-      ];
+    if(useScripts){
+      manifest.modules.push({
+        type:"script",
+        language:"javascript",
+        uuid:moduleUUID,
+        version,
+        entry: document.getElementById("scriptName").value || "main.js"
+      });
     } else {
-      manifest.modules = [
-        {
-          description: "JavaScript module",
-          type: "script",
-          language: "javascript",
-          uuid: moduleUUID,
-          version: version,
-          entry: scriptName
-        }
-      ];
-    }
-
-    // 🔥 DEPENDENCIES SIEMPRE ACTIVAS
-    manifest.dependencies = [];
-
-    // 👉 scripts (si existen)
-    if (useScripts) {
-      manifest.dependencies.push({
-        module_name: "@minecraft/server",
-        version: "1.11.0"
+      manifest.modules.push({
+        type:"data",
+        uuid:moduleUUID,
+        version
       });
     }
 
-    // 👉 RP UUID (aunque esté vacío)
-    manifest.dependencies.push({
-      uuid: rpUUID || "",
-      version: version
-    });
+    let deps=[];
 
+    if(useScripts){
+      deps.push({
+        module_name:"@minecraft/server",
+        version:"1.11.0"
+      });
+    }
+
+    if(useDependency){
+      deps.push({
+        uuid: rpUUIDValue || "",
+        version
+      });
+    }
+
+    if(deps.length>0){
+      manifest.dependencies=deps;
+    }
   }
 
-if (document.getElementById("useSubpacks").checked) {
-  manifest.subpacks = [
-    {
+  // subpacks
+  if(document.getElementById("useSubpacks").checked){
+    manifest.subpacks=[{
       folder_name: document.getElementById("subpack1_folder").value || "default",
-      memory_tier: parseInt(document.getElementById("subpack1_memory").value) || 0,
-      name: document.getElementById("subpack1_name").value || "Subpack"
-    }
-  ];
-}
+      name: document.getElementById("subpack1_name").value || "Subpack",
+      memory_tier: parseInt(document.getElementById("subpack1_memory").value)||0
+    }];
+  }
 
-  // 🔥 METADATA SIEMPRE AL FINAL
-  manifest.metadata = {
-    authors: [author],
-    product_type: type === "bp" ? "addon" : "texture"
+  manifest.metadata={
+    authors:[author],
+    product_type: type==="bp"?"addon":"texture"
   };
 
   document.getElementById("output").value =
-    JSON.stringify(manifest, null, 2);
-}
-
-function downloadJSON() {
-  const text = document.getElementById("output").value;
-  const blob = new Blob([text], { type: "application/json" });
-  const a = document.createElement("a");
-
-  a.href = URL.createObjectURL(blob);
-  a.download = "manifest.json";
-  a.click();
+    JSON.stringify(manifest,null,2);
 }
 </script>
 
