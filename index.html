@@ -379,13 +379,13 @@
         const name = document.getElementById("name").value;
         const desc = document.getElementById("desc").value;
         const author = document.getElementById("author").value;
-        const version = parseVersion(document.getElementById("version").value);
-
+        const version = parseVersion(document.getElementById      ("version").value);
+      
         const type = document.getElementById("type").value;
-        const useScripts = document.getElementById("scripts").checked;
-        const useDependency = document.getElementById("useDependency").checked;
-        const rpUUIDValue = document.getElementById("rpUUID").value.trim();
-
+        const useScripts = document.getElementById("scripts").      checked;
+        const useDependency = document.getElementById     ("useDependency").checked;
+        const rpUUIDValue = document.getElementById("rpUUID").      value.trim();
+      
         let manifest = {
           format_version: 2,
           header: {
@@ -397,16 +397,16 @@
           },
           modules: [],
         };
-
+      
         const moduleUUID = uuid();
-
+      
         if (type === "rp") {
           manifest.modules.push({
             type: "resources",
             uuid: moduleUUID,
             version,
           });
-
+        
           if (useDependency) {
             manifest.dependencies = [
               {
@@ -416,16 +416,27 @@
             ];
           }
         }
-
+      
         if (type === "bp") {
           if (useScripts) {
+          
+            // 🔥 AQUÍ ESTÁ LA CORRECCIÓN
+            let scriptName = document.getElementById("scriptName").     value.trim();
+          
+            if (!scriptName) {
+              scriptName = "main.js";
+            } else if (!scriptName.endsWith(".js")) {
+              scriptName += ".js";
+            }
+          
             manifest.modules.push({
               type: "script",
               language: "javascript",
               uuid: moduleUUID,
               version,
-              entry: document.getElementById("scriptName").value || "main.js",
+              entry: scriptName,
             });
+          
           } else {
             manifest.modules.push({
               type: "data",
@@ -433,49 +444,49 @@
               version,
             });
           }
-
+        
           let deps = [];
-
+        
           if (useScripts) {
             deps.push({
               module_name: "@minecraft/server",
               version: "1.11.0",
             });
           }
-
+        
           if (useDependency) {
             deps.push({
               uuid: rpUUIDValue || "",
               version,
             });
           }
-
+        
           if (deps.length > 0) {
             manifest.dependencies = deps;
           }
         }
-
+      
         if (document.getElementById("useSubpacks").checked) {
           manifest.subpacks = [
             {
               folder_name:
-                document.getElementById("subpack1_folder").value || "default",
-              name: document.getElementById("subpack1_name").value || "Subpack",
+                document.getElementById("subpack1_folder").     value || "default",
+              name: document.getElementById("subpack1_name").     value || "Subpack",
               memory_tier:
-                parseInt(document.getElementById("subpack1_memory").value) || 0,
+                parseInt(document.getElementById      ("subpack1_memory").value) || 0,
             },
           ];
         }
-
+      
         manifest.metadata = {
           authors: [author],
           product_type: type === "bp" ? "addon" : "texture",
         };
-
+      
         document.getElementById("output").value = JSON.stringify(
           manifest,
           null,
-          2,
+          2
         );
       }
 
@@ -531,6 +542,7 @@
     <a href="https://diegokugamer541.github.io/GENERADOR-DE-QR" target="_blank">Generador de QR</a>
     <a href="https://youtube.com/@diegokugamer541" target="_blank">YouTube</a>
     <a href="https://twitch.tv/diegokugamer541" target="_blank">Twitch</a>
+    <a href="https://twitch.tv/ipodcraftyt" target="_blank">Twitch IpodcraftYT</a>
     <a href="https://discord.gg/AMCtjwVNvk"   target="_blank">Discord Minecraft</a>
     <a href="https://github.com/DIEGOKUGAMER541" target="_blank">GitHub</a>
     <a href="https://ipodcraft.com" target="_blank"> Ipodcraft web</a>
