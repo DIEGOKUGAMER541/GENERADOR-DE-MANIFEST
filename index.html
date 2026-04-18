@@ -1,402 +1,425 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manifest Tool</title>
-
-<link rel="icon" href="https://mc-heads.net/avatar/diegokugamer541" type="image/png">
-<style>
-/* 🔥 Oculta scrollbar en Chrome, Edge, Safari (PC + móvil) */
-::-webkit-scrollbar {
-  display: none;
-}
-
-/* 🔥 Firefox */
-html, body {
-  scrollbar-width: none;
-}
-
-/* 🔥 IE viejo (por compatibilidad) */
-body {
-  -ms-overflow-style: none;
-}
-
-body {
-  background: url("https://i.imgur.com/z4guq1U.jpeg") no-repeat center center;
-  background-size: cover;
-  background-attachment: fixed;
-  font-family: Arial;
-  text-align: center;
-  padding: 20px;
-  margin: 0;
-}
-
-@media (max-width: 600px) {
-  body {
-    background: url("https://i.imgur.com/tdiVvNP.jpeg") no-repeat center center;
-    background-size: cover;
-    background-attachment: scroll;
-    min-height: 100vh;
-  }
-}
-
-.container {
-  max-width: 500px;
-  margin: auto;
-}
-
-.inputBox {
-  position: relative;
-  margin: 18px 0;
-}
-
-.inputBox input {
-  width: 100%;
-  padding: 12px;
-  background: #c800ff;
-  border: 2px solid #c800ff;
-  color: #00fbff;
-  border-radius: 8px;
-  outline: none;
-}
-
-.inputBox span {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #00fbff;
-  transition: 0.3s;
-}
-
-.inputBox input:focus ~ span,
-.inputBox input:not(:placeholder-shown) ~ span {
-  top: -8px;
-  font-size: 12px;
-}
-
-.checkboxBox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 10px 0;
-}
-
-.checkboxBox span {
-  color: #00fbff;
-}
-
-.checkboxBox input {
-  width: auto; /* 🔥 importante */
-}
-
-.checkboxBox input:checked ~ span {
-  color: #c800ff;
-  text-shadow: 0 0 5px #c800ff;
-}
-
-.checkboxBox label {
-  cursor: pointer;
-  color: #00fbff;
-  font-size: 14px;
-}
-
-select {
-  width: 100%;
-  padding: 12px;
-  background: #c800ff;
-  border: 2px solid #680885;
-  color: #00fbff;
-  border-radius: 8px;
-}
-
-button {
-  background:#680885;
-  color:#00fbff;
-  font-weight:bold;
-  margin-top:10px;
-  padding:10px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-textarea {
-  width:100%;
-  height:300px;
-  margin-top:15px;
-  background:rgb(0, 255, 247);
-  color:#680885;
-  padding:10px;
-  border-radius:8px;
-}
-
-h2 {
-  color: #00fbff;
-}
-
-#scriptsContainer,
-#scriptNameContainer,
-#dependencyInput,
-#subpackInputs {
-  display:none;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h2>Generador de Manifest</h2>
-
-<div class="inputBox">
-  <input id="name" placeholder=" ">
-  <span>Nombre del Addon o Textura</span>
-</div>
-
-<div class="inputBox">
-  <input id="desc" placeholder=" ">
-  <span>Descripción</span>
-</div>
-
-<div class="inputBox">
-  <input id="author" placeholder=" ">
-  <span>Autor</span>
-</div>
-
-<div class="inputBox">
-  <input id="version" placeholder=" ">
-  <span>Versión (1.0.0)</span>
-</div>
-
-<select id="type" onchange="toggleScripts()">
-  <option value="rp">Resource Pack</option>
-  <option value="bp">Behavior Pack</option>
-</select>
-
-<!-- DEPENDENCY -->
-<label class="checkboxBox">
-  <input type="checkbox" id="useDependency" onchange="toggleDependency()">
-  <span>Agregar dependencia</span>
-</label>
-
-<div id="dependencyInput" class="inputBox">
-  <input id="rpUUID" placeholder=" ">
-  <span>UUID de Dependencia</span>
-</div>
-
-<!-- SCRIPTS -->
-<label id="scriptsContainer" class="checkboxBox">
-  <input type="checkbox" id="scripts" onchange="toggleScriptName()">
-  <span>Agregar Scripts</span>
-</label>
-
-<div id="scriptNameContainer" class="inputBox">
-  <input id="scriptName" placeholder=" ">
-  <span>Nombre del script</span>
-</div>
-
-<!-- SUBPACKS -->
-<label class="checkboxBox">
-  <input type="checkbox" id="useSubpacks" onchange="toggleSubpacks()">
-  <span>Agregar Subpacks</span>
-</label>
-
-<div id="subpackInputs">
-  <div class="inputBox">
-    <input id="subpack1_name" placeholder=" ">
-    <span>Nombre</span>
-  </div>
-
-  <div class="inputBox">
-    <input id="subpack1_folder" placeholder=" ">
-    <span>Folder</span>
-  </div>
-
-  <div class="inputBox">
-    <input id="subpack1_memory" placeholder=" ">
-    <span>Memory Tier</span>
-  </div>
-</div>
-
-<button onclick="generate()">Generar</button>
-
-<div class="actions">
-  <button onclick="copyJSON()">Copiar JSON</button>
-  <button onclick="downloadJSON()">Descargar</button>
-</div>
-
-<textarea id="output" readonly></textarea>
-
-</div>
-
-<script>
-function uuid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random()*16|0;
-    const v = c === 'x' ? r : (r&0x3|0x8);
-    return v.toString(16);
-  });
-}
-
-function toggleScripts() {
-  const type = document.getElementById("type").value;
-  document.getElementById("scriptsContainer").style.display =
-    (type === "bp") ? "flex" : "none";
-}
-
-function toggleScriptName() {
-  document.getElementById("scriptNameContainer").style.display =
-    document.getElementById("scripts").checked ? "block" : "none";
-}
-
-function toggleDependency() {
-  document.getElementById("dependencyInput").style.display =
-    document.getElementById("useDependency").checked ? "block" : "none";
-}
-
-function toggleSubpacks() {
-  document.getElementById("subpackInputs").style.display =
-    document.getElementById("useSubpacks").checked ? "block" : "none";
-}
-
-function parseVersion(v){
-  if(!v) return [1,0,0];
-  return v.split(".").map(n=>parseInt(n)||0);
-}
-
-function generate(){
-
-  const name = document.getElementById("name").value;
-  const desc = document.getElementById("desc").value;
-  const author = document.getElementById("author").value;
-  const version = parseVersion(document.getElementById("version").value);
-
-  const type = document.getElementById("type").value;
-  const useScripts = document.getElementById("scripts").checked;
-  const useDependency = document.getElementById("useDependency").checked;
-  const rpUUIDValue = document.getElementById("rpUUID").value.trim();
-
-  let manifest = {
-    format_version: 2,
-    header: {
-      name, description: desc,
-      uuid: uuid(),
-      version,
-      min_engine_version: [1,20,80]
-    },
-    modules: []
-  };
-
-  const moduleUUID = uuid();
-
-  // RP
-  if(type==="rp"){
-    manifest.modules.push({
-      type:"resources",
-      uuid:moduleUUID,
-      version
-    });
-
-    if(useDependency){
-      manifest.dependencies=[{
-        uuid: rpUUIDValue || "",
-        version
-      }];
-    }
-  }
-
-  // BP
-  if(type==="bp"){
-
-    if(useScripts){
-      manifest.modules.push({
-        type:"script",
-        language:"javascript",
-        uuid:moduleUUID,
-        version,
-        entry: document.getElementById("scriptName").value || "main.js"
-      });
-    } else {
-      manifest.modules.push({
-        type:"data",
-        uuid:moduleUUID,
-        version
-      });
-    }
-
-    let deps=[];
-
-    if(useScripts){
-      deps.push({
-        module_name:"@minecraft/server",
-        version:"1.11.0"
-      });
-    }
-
-    if(useDependency){
-      deps.push({
-        uuid: rpUUIDValue || "",
-        version
-      });
-    }
-
-    if(deps.length>0){
-      manifest.dependencies=deps;
-    }
-  }
-
-  // subpacks
-  if(document.getElementById("useSubpacks").checked){
-    manifest.subpacks=[{
-      folder_name: document.getElementById("subpack1_folder").value || "default",
-      name: document.getElementById("subpack1_name").value || "Subpack",
-      memory_tier: parseInt(document.getElementById("subpack1_memory").value)||0
-    }];
-  }
-
-  manifest.metadata={
-    authors:[author],
-    product_type: type==="bp"?"addon":"texture"
-  };
-
-  document.getElementById("output").value =
-    JSON.stringify(manifest,null,2);
-}
-
-function copyJSON() {
-  const text = document.getElementById("output").value;
-
-  if (!text) {
-    alert("Primero genera el manifest");
-    return;
-  }
-
-  navigator.clipboard.writeText(text)
-    .then(() => {
-      alert("Manifest copiado al portapapeles");
-    })
-    .catch(() => {
-      // fallback por si el navegador bloquea clipboard
-      const textarea = document.getElementById("output");
-      textarea.select();
-      document.execCommand("copy");
-      alert("Copiado (modo compatibilidad)");
-    });
-}
-
-function downloadJSON() {
-  const text = document.getElementById("output").value;
-  const blob = new Blob([text], { type: "application/json" });
-  const a = document.createElement("a");
-
-  a.href = URL.createObjectURL(blob);
-  a.download = "manifest.json";
-  a.click();
-}
-</script>
-
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manifest Tool</title>
+
+    <link
+      rel="icon"
+      href="https://mc-heads.net/avatar/diegokugamer541"
+      type="image/png"
+    />
+
+    <style>
+      ::-webkit-scrollbar {
+        display: none;
+      }
+
+      html,
+      body {
+        scrollbar-width: none;
+      }
+
+      body {
+        -ms-overflow-style: none;
+      }
+
+      body {
+        background: url("https://i.imgur.com/z4guq1U.jpeg") no-repeat center
+          center;
+        background-size: cover;
+        background-attachment: fixed;
+        font-family: Arial;
+        text-align: center;
+        padding: 20px;
+        margin: 0;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          background: url("https://i.imgur.com/tdiVvNP.jpeg") no-repeat center
+            center;
+          background-size: cover;
+          background-attachment: scroll;
+          min-height: 100vh;
+        }
+      }
+
+      .container {
+        max-width: 500px;
+        margin: auto;
+      }
+
+      .inputBox {
+        position: relative;
+        margin: 18px 0;
+      }
+
+      .inputBox input {
+        width: 100%;
+        padding: 12px;
+        background: #333;
+        border: 2px solid #c800ff;
+        color: #00fbff;
+        border-radius: 8px;
+        outline: none;
+      }
+
+      .inputBox span {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #00fbff;
+        transition: 0.3s;
+      }
+
+      .inputBox input:focus ~ span,
+      .inputBox input:not(:placeholder-shown) ~ span {
+        top: -8px;
+        font-size: 12px;
+      }
+
+      .checkboxBox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 0;
+      }
+
+      .checkboxBox span {
+        color: #00fbff;
+      }
+
+      .checkboxBox input {
+        width: auto;
+      }
+
+      .checkboxBox input:checked ~ span {
+        color: #c800ff;
+        text-shadow: 0 0 5px #c800ff;
+      }
+
+      .checkboxBox label {
+        cursor: pointer;
+        color: #00fbff;
+        font-size: 14px;
+      }
+
+      select {
+        width: 100%;
+        padding: 12px;
+        background: #333;
+        border: 2px solid #c800ff;
+        color: #00fbff;
+        border-radius: 8px;
+      }
+
+      button {
+        background: #333;
+        color: #00fbff;
+        font-weight: bold;
+        margin-top: 10px;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #00FBFF;
+        color: black;
+        border-color: #00FBFF;
+      }
+
+      textarea {
+        width: 100%;
+        height: 300px;
+        margin-top: 15px;
+        background: #333;
+        border: 2px solid #c800ff;
+        color: #00fff7;
+        padding: 10px;
+        border-radius: 8px;
+      }
+
+      label{
+        margin-top: 20px;
+        font-size: 16px;
+        color: #00fbff; 
+      }
+
+      h2 {
+        color: #00fbff;
+      }
+
+      #scriptsContainer,
+      #scriptNameContainer,
+      #dependencyInput,
+      #subpackInputs {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Generador de Manifest</h2>
+
+      <div class="inputBox">
+        <input id="name" placeholder=" " />
+        <span>Nombre del Addon o Textura</span>
+      </div>
+
+      <div class="inputBox">
+        <input id="desc" placeholder=" " />
+        <span>Descripción</span>
+      </div>
+
+      <div class="inputBox">
+        <input id="author" placeholder=" " />
+        <span>Autor</span>
+      </div>
+
+      <div class="inputBox">
+        <input id="version" placeholder=" " />
+        <span>Versión (1.0.0)</span>
+      </div>
+
+      <label>Tipo de Paquete:</label>
+      <select id="type" onchange="toggleScripts()">
+        <option value="rp">Resource Pack</option>
+        <option value="bp">Behavior Pack</option>
+      </select>
+
+      <label class="checkboxBox">
+        <input
+          type="checkbox"
+          id="useDependency"
+          onchange="toggleDependency()"
+        />
+        <span>Agregar dependencia</span>
+      </label>
+
+      <div id="dependencyInput" class="inputBox">
+        <input id="rpUUID" placeholder=" " />
+        <span>UUID de Dependencia</span>
+      </div>
+
+      <label id="scriptsContainer" class="checkboxBox">
+        <input type="checkbox" id="scripts" onchange="toggleScriptName()" />
+        <span>Agregar Scripts</span>
+      </label>
+
+      <div id="scriptNameContainer" class="inputBox">
+        <input id="scriptName" placeholder=" " />
+        <span>Nombre del script</span>
+      </div>
+
+      <label class="checkboxBox">
+        <input type="checkbox" id="useSubpacks" onchange="toggleSubpacks()" />
+        <span>Agregar Subpacks</span>
+      </label>
+
+      <div id="subpackInputs">
+        <div class="inputBox">
+          <input id="subpack1_name" placeholder=" " />
+          <span>Nombre</span>
+        </div>
+
+        <div class="inputBox">
+          <input id="subpack1_folder" placeholder=" " />
+          <span>Folder</span>
+        </div>
+
+        <div class="inputBox">
+          <input id="subpack1_memory" placeholder=" " />
+          <span>Memory Tier</span>
+        </div>
+      </div>
+
+      <div class="actions">
+      <button onclick="generate()">Generar</button>
+      <button onclick="copyJSON()">Copiar JSON</button>
+      <button onclick="downloadJSON()">Descargar</button>
+      </div>
+
+      <textarea id="output" readonly></textarea>
+    </div>
+
+    <script>
+      function uuid() {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+          /[xy]/g,
+          function (c) {
+            const r = (Math.random() * 16) | 0;
+            const v = c === "x" ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          },
+        );
+      }
+
+      function toggleScripts() {
+        const type = document.getElementById("type").value;
+        document.getElementById("scriptsContainer").style.display =
+          type === "bp" ? "flex" : "none";
+      }
+
+      function toggleScriptName() {
+        document.getElementById("scriptNameContainer").style.display =
+          document.getElementById("scripts").checked ? "block" : "none";
+      }
+
+      function toggleDependency() {
+        document.getElementById("dependencyInput").style.display =
+          document.getElementById("useDependency").checked ? "block" : "none";
+      }
+
+      function toggleSubpacks() {
+        document.getElementById("subpackInputs").style.display =
+          document.getElementById("useSubpacks").checked ? "block" : "none";
+      }
+
+      function parseVersion(v) {
+        if (!v) return [1, 0, 0];
+        return v.split(".").map((n) => parseInt(n) || 0);
+      }
+
+      function generate() {
+        const name = document.getElementById("name").value;
+        const desc = document.getElementById("desc").value;
+        const author = document.getElementById("author").value;
+        const version = parseVersion(document.getElementById("version").value);
+
+        const type = document.getElementById("type").value;
+        const useScripts = document.getElementById("scripts").checked;
+        const useDependency = document.getElementById("useDependency").checked;
+        const rpUUIDValue = document.getElementById("rpUUID").value.trim();
+
+        let manifest = {
+          format_version: 2,
+          header: {
+            name,
+            description: desc,
+            uuid: uuid(),
+            version,
+            min_engine_version: [1, 20, 80],
+          },
+          modules: [],
+        };
+
+        const moduleUUID = uuid();
+
+        if (type === "rp") {
+          manifest.modules.push({
+            type: "resources",
+            uuid: moduleUUID,
+            version,
+          });
+
+          if (useDependency) {
+            manifest.dependencies = [
+              {
+                uuid: rpUUIDValue || "",
+                version,
+              },
+            ];
+          }
+        }
+
+        if (type === "bp") {
+          if (useScripts) {
+            manifest.modules.push({
+              type: "script",
+              language: "javascript",
+              uuid: moduleUUID,
+              version,
+              entry: document.getElementById("scriptName").value || "main.js",
+            });
+          } else {
+            manifest.modules.push({
+              type: "data",
+              uuid: moduleUUID,
+              version,
+            });
+          }
+
+          let deps = [];
+
+          if (useScripts) {
+            deps.push({
+              module_name: "@minecraft/server",
+              version: "1.11.0",
+            });
+          }
+
+          if (useDependency) {
+            deps.push({
+              uuid: rpUUIDValue || "",
+              version,
+            });
+          }
+
+          if (deps.length > 0) {
+            manifest.dependencies = deps;
+          }
+        }
+
+        if (document.getElementById("useSubpacks").checked) {
+          manifest.subpacks = [
+            {
+              folder_name:
+                document.getElementById("subpack1_folder").value || "default",
+              name: document.getElementById("subpack1_name").value || "Subpack",
+              memory_tier:
+                parseInt(document.getElementById("subpack1_memory").value) || 0,
+            },
+          ];
+        }
+
+        manifest.metadata = {
+          authors: [author],
+          product_type: type === "bp" ? "addon" : "texture",
+        };
+
+        document.getElementById("output").value = JSON.stringify(
+          manifest,
+          null,
+          2,
+        );
+      }
+
+      function copyJSON() {
+        const text = document.getElementById("output").value;
+
+        if (!text) {
+          alert("Primero genera el manifest");
+          return;
+        }
+
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            alert("Manifest copiado al portapapeles");
+          })
+          .catch(() => {
+            const textarea = document.getElementById("output");
+            textarea.select();
+            document.execCommand("copy");
+            alert("Copiado (modo compatibilidad)");
+          });
+      }
+
+      function downloadJSON() {
+        const text = document.getElementById("output").value;
+        const blob = new Blob([text], { type: "application/json" });
+        const a = document.createElement("a");
+
+        a.href = URL.createObjectURL(blob);
+        a.download = "manifest.json";
+        a.click();
+      }
+    </script>
+  </body>
 </html>
