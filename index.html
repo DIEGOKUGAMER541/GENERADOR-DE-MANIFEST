@@ -154,12 +154,100 @@
         color: #00fbff;
       }
 
+      p{
+        color: #00fbff;
+      }
       #scriptsContainer,
       #scriptNameContainer,
       #dependencyInput,
       #subpackInputs {
         display: none;
       }
+      /* Botón flotante */
+.about-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1f1f1f;
+  color: #00fbff;
+  border: 2px solid #00fbff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
+  z-index: 1000;
+}
+
+.about-btn:hover {
+  background: #00fbff;
+  color: black;
+}
+
+/* Panel oscuro */
+.about-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+/* Panel activo */
+.about-panel.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Contenido */
+.about-content {
+  background: #1f1f1f;
+  padding: 25px;
+  border-radius: 15px;
+  text-align: center;
+  width: 90%;
+  max-width: 300px;
+  border: 2px solid #00fbff;
+}
+
+.about-content h3 {
+  color: #00fbff;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.links a {
+  text-decoration: none;
+  color: #00fbff;
+  background: #333;
+  padding: 10px;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.links a:hover {
+  background: #00fbff;
+  color: black;
+}
     </style>
   </head>
 
@@ -420,6 +508,35 @@
         a.download = "manifest.json";
         a.click();
       }
+
+      function toggleAbout() {
+  const panel = document.getElementById("aboutPanel");
+  panel.classList.toggle("active");
+}
     </script>
+
+<!-- Botón flotante -->
+<div class="about-btn" onclick="toggleAbout()">ℹ</div>
+
+<!-- Panel Acerca de -->
+<div class="about-panel" id="aboutPanel">
+  <div class="about-content">
+    <h3>Acerca de</h3>
+    <p>Desarrollado por DIEGOKUGAMER541</p>
+
+    <div class="links">
+
+    <a href="https://bedpks.com" target="_blank">BEDPKS</a>
+    <a href="https://diegokugamer541.github.io/GENERADOR-DE-QR" target="_blank">Generador de QR</a>
+    <a href="https://youtube.com/@diegokugamer541" target="_blank">YouTube</a>
+    <a href="https://twitch.tv/diegokugamer541" target="_blank">Twitch</a>
+    <a href="https://discord.gg/AMCtjwVNvk"   target="_blank">Discord Mnecraft</a>
+    <a href="https://github.com/DIEGOKUGAMER541" target="_blank">GitHub</a>
+    </div>
+
+    <button onclick="toggleAbout()">Cerrar</button>
+  </div>
+</div>
+
   </body>
 </html>
