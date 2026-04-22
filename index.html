@@ -164,91 +164,125 @@
       #subpackInputs {
         display: none;
       }
-      /* Botón flotante */
-.about-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #1f1f1f;
-  color: #00fbff;
-  border: 2px solid #00fbff;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: 0.3s;
-  z-index: 1000;
-}
 
-.about-btn:hover {
-  background: #00fbff;
-  color: black;
-}
+      .about-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #333;
+        color: #00fbff;
+        border: 2px solid #00fbff;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.3s;
+        z-index: 1000;
+      }
 
-/* Panel oscuro */
-.about-panel {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(8px);
+      .about-btn:hover {
+        background: #00fbff;
+        color: #333;
+      }
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+      .about-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000000cc;
+        backdrop-filter: blur(8px);
+      
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.3s;
+      }
 
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.3s;
-}
+      .about-panel.active {
+        opacity: 1;
+        pointer-events: all;
+      }
 
-/* Panel activo */
-.about-panel.active {
-  opacity: 1;
-  pointer-events: all;
-}
+      .about-content {
+        background: #1f1f1f;
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        width: 90%;
+        max-width: 300px;
+        border: 2px solid #00fbff;
+      }
 
-/* Contenido */
-.about-content {
-  background: #1f1f1f;
-  padding: 25px;
-  border-radius: 15px;
-  text-align: center;
-  width: 90%;
-  max-width: 300px;
-  border: 2px solid #00fbff;
-}
+      .about-content h3 {
+        color: #00fbff;
+      }
 
-.about-content h3 {
-  color: #00fbff;
-}
+      .links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 15px 0;
+      }
 
-.links {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 15px 0;
-}
+      .links a {
+        text-decoration: none;
+        color: #00fbff;
+        background: #333;
+        padding: 10px;
+        border-radius: 8px;
+        transition: 0.3s;
+      }
 
-.links a {
-  text-decoration: none;
-  color: #00fbff;
-  background: #333;
-  padding: 10px;
-  border-radius: 8px;
-  transition: 0.3s;
-}
+      .links a:hover {
+        background: #00fbff;
+        color: #333;
+      }
+      .version-group {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin: 10px 0 20px;
+      }
+      
+      .version-group input {
+        width: 60px;
+        padding: 10px;
+        text-align: center;
+        font-size: 16px;
+      
+        background: #333;
+        border: 2px solid #c800ff;
+        color: #00fbff;
+        border-radius: 10px;
+      
+        outline: none;
+        transition: 0.2s;
+      }
+      
+      .version-group input:focus {
+        border-color: #00fbff;
+        box-shadow: 0 0 8px #00fbff;
+      }
 
-.links a:hover {
-  background: #00fbff;
-  color: black;
-}
+      .version-group input {
+      appearance: auto;
+      }
+      
+      .version-group span {
+        color: #00fbff;
+        font-weight: bold;
+        font-size: 18px;
+      }
     </style>
   </head>
 
@@ -271,9 +305,24 @@
         <span>Autor</span>
       </div>
 
-      <div class="inputBox">
-        <input id="version" placeholder=" " />
-        <span>Versión (1.0.0)</span>
+      <label>Versión:</label>
+
+      <div class="version-group">
+        <input id="v1" type="number" placeholder="1" />
+        <span>.</span>
+        <input id="v2" type="number" placeholder="0" />
+        <span>.</span>
+        <input id="v3" type="number" placeholder="0" />
+      </div>
+
+      <label>Min Engine Version:</label>
+
+      <div class="version-group">
+        <input id="min_v1" type="number" placeholder="1" />
+        <span>.</span>
+        <input id="min_v2" type="number" placeholder="20" />
+        <span>.</span>
+        <input id="min_v3" type="number" placeholder="80" />
       </div>
 
       <label>Tipo de Paquete:</label>
@@ -379,8 +428,18 @@
         const name = document.getElementById("name").value;
         const desc = document.getElementById("desc").value;
         const author = document.getElementById("author").value;
-        const version = parseVersion(document.getElementById      ("version").value);
+        const version = [
+        parseInt(document.getElementById("v1").value) || 1,
+        parseInt(document.getElementById("v2").value) || 0,
+        parseInt(document.getElementById("v3").value) || 0,
+      ];
       
+        const minEngineVersion = [
+          parseInt(document.getElementById("min_v1").value) || 1,
+          parseInt(document.getElementById("min_v2").value) || 20,
+          parseInt(document.getElementById("min_v3").value) || 80,
+        ];
+
         const type = document.getElementById("type").value;
         const useScripts = document.getElementById("scripts").      checked;
         const useDependency = document.getElementById     ("useDependency").checked;
@@ -393,7 +452,7 @@
             description: desc,
             uuid: uuid(),
             version,
-            min_engine_version: [1, 20, 80],
+            min_engine_version: minEngineVersion,
           },
           modules: [],
         };
@@ -526,10 +585,8 @@
 }
     </script>
 
-<!-- Botón flotante -->
 <div class="about-btn" onclick="toggleAbout()">ℹ</div>
 
-<!-- Panel Acerca de -->
 <div class="about-panel" id="aboutPanel">
   <div class="about-content">
     <h3>Acerca de</h3>
@@ -537,13 +594,14 @@
 
     <div class="links">
 
-    <a href="https://bedpks.com" target="_blank">BEDPKS</a>
     <a href="https://diegokugamer541.github.io/GENERADOR-DE-QR" target="_blank">Generador de QR</a>
+    <a href="https://bedpks.com" target="_blank">BEDPKS</a>
     <a href="https://youtube.com/@diegokugamer541" target="_blank">YouTube</a>
     <a href="https://twitch.tv/diegokugamer541" target="_blank">Twitch</a>
-    <a href="https://twitch.tv/ipodcraftyt" target="_blank">Twitch IpodcraftYT</a>
     <a href="https://discord.gg/AMCtjwVNvk"   target="_blank">Discord Minecraft</a>
     <a href="https://github.com/DIEGOKUGAMER541" target="_blank">GitHub</a>
+    <a href="https://youtube.com/@ipodcraft" target="_blank">Youtube Ipodcraft</a>
+    <a href="https://twitch.tv/ipodcraftyt" target="_blank">Twitch IpodcraftYT</a>
     <a href="https://ipodcraft.com" target="_blank"> Ipodcraft web</a>
     </div>
 
