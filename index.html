@@ -4,30 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manifest Tool</title>
-
-    <link
-      rel="icon"
-      href="https://mc-heads.net/avatar/diegokugamer541"
-      type="image/png"
-    />
-
+    <link rel="icon" href="https://mc-heads.net/avatar/diegokugamer541" type="image/png"/>
     <style>
       ::-webkit-scrollbar {
         display: none;
       }
-
       html,
       body {
         scrollbar-width: none;
       }
-
       body {
         -ms-overflow-style: none;
       }
-
       body {
-        background: url("https://i.imgur.com/z4guq1U.jpeg") no-repeat center
-          center;
+        background: url("https://i.imgur.com/z4guq1U.jpeg") no-repeat center center;
         background-size: cover;
         background-attachment: fixed;
         font-family: Arial;
@@ -35,27 +25,22 @@
         padding: 20px;
         margin: 0;
       }
-
       @media (max-width: 600px) {
         body {
-          background: url("https://i.imgur.com/tdiVvNP.jpeg") no-repeat center
-            center;
+          background: url("https://i.imgur.com/tdiVvNP.jpeg") no-repeat center center;
           background-size: cover;
           background-attachment: scroll;
           min-height: 100vh;
         }
       }
-
       .container {
         max-width: 500px;
         margin: auto;
       }
-
       .inputBox {
         position: relative;
         margin: 18px 0;
       }
-
       .inputBox input {
         width: 100%;
         padding: 12px;
@@ -65,7 +50,6 @@
         border-radius: 8px;
         outline: none;
       }
-
       .inputBox span {
         position: absolute;
         left: 10px;
@@ -74,13 +58,11 @@
         color: #00fbff;
         transition: 0.3s;
       }
-
       .inputBox input:focus ~ span,
       .inputBox input:not(:placeholder-shown) ~ span {
         top: -8px;
         font-size: 12px;
       }
-
       .checkboxBox {
         display: flex;
         align-items: center;
@@ -88,26 +70,21 @@
         margin: 10px 0;
         cursor: pointer;
       }
-
       .checkboxBox span {
         color: #00fbff;
       }
-
       .checkboxBox input {
         width: auto;
       }
-
       .checkboxBox input:checked ~ span {
         color: #c800ff;
         text-shadow: 0 0 5px #c800ff;
       }
-
       .checkboxBox label {
         cursor: pointer;
         color: #00fbff;
         font-size: 14px;
       }
-
       select {
         width: 100%;
         padding: 12px;
@@ -116,7 +93,6 @@
         color: #00fbff;
         border-radius: 8px;
       }
-
       button {
         background: #333;
         color: #00fbff;
@@ -127,13 +103,11 @@
         border-radius: 8px;
         cursor: pointer;
       }
-
       button:hover {
         background: #00FBFF;
         color: black;
         border-color: #00FBFF;
       }
-
       textarea {
         width: 100%;
         height: 300px;
@@ -144,27 +118,20 @@
         padding: 10px;
         border-radius: 8px;
       }
-
       label{
         margin-top: 20px;
         font-size: 16px;
         color: #00fbff; 
       }
-
-      h2 {
+      h1 {
         color: #00fbff;
       }
-
+      h2 {
+        color: #d000ff;
+      }
       p{
         color: #00fbff;
       }
-      #scriptsContainer,
-      #scriptNameContainer,
-      #dependencyInput,
-      #subpackInputs {
-        display: none;
-      }
-
       .about-btn {
         position: fixed;
         bottom: 20px;
@@ -183,12 +150,10 @@
         transition: 0.3s;
         z-index: 1000;
       }
-
       .about-btn:hover {
         background: #00fbff;
         color: #333;
       }
-
       .about-panel {
         position: fixed;
         top: 0;
@@ -197,21 +162,17 @@
         height: 100%;
         background: #000000cc;
         backdrop-filter: blur(8px);
-      
         display: flex;
         align-items: center;
         justify-content: center;
-      
         opacity: 0;
         pointer-events: none;
         transition: 0.3s;
       }
-
       .about-panel.active {
         opacity: 1;
         pointer-events: all;
       }
-
       .about-content {
         background: #1f1f1f;
         padding: 25px;
@@ -221,18 +182,15 @@
         max-width: 300px;
         border: 2px solid #00fbff;
       }
-
       .about-content h3 {
         color: #00fbff;
       }
-
       .links {
         display: flex;
         flex-direction: column;
         gap: 10px;
         margin: 15px 0;
       }
-
       .links a {
         text-decoration: none;
         color: #00fbff;
@@ -241,7 +199,6 @@
         border-radius: 8px;
         transition: 0.3s;
       }
-
       .links a:hover {
         background: #00fbff;
         color: #333;
@@ -253,139 +210,84 @@
         gap: 8px;
         margin: 10px 0 20px;
       }
-      
       .version-group input {
         width: 60px;
         padding: 10px;
         text-align: center;
         font-size: 16px;
-      
         background: #333;
         border: 2px solid #c800ff;
         color: #00fbff;
         border-radius: 10px;
-      
         outline: none;
         transition: 0.2s;
       }
-      
       .version-group input:focus {
         border-color: #00fbff;
         box-shadow: 0 0 8px #00fbff;
       }
-
       .version-group input {
       appearance: auto;
       }
-      
       .version-group span {
         color: #00fbff;
         font-weight: bold;
         font-size: 18px;
       }
+      #scriptsContainer,
+      #scriptNameContainer,
+      #dependencyInput,
+      #subpackInputs {
+        display: none;
+      }
     </style>
   </head>
-
-  <body>
+<body>
     <div class="container">
-      <h2>Generador de Manifest</h2>
+      <h1>Generador de Manifest</h1>
 
-      <div class="inputBox">
-        <input id="name" placeholder=" " />
-        <span>Nombre del Addon o Textura</span>
-      </div>
-
-      <div class="inputBox">
-        <input id="desc" placeholder=" " />
-        <span>Descripción</span>
-      </div>
-
-      <div class="inputBox">
-        <input id="author" placeholder=" " />
-        <span>Autor</span>
-      </div>
-
+      <div class="inputBox"> <input id="name" placeholder=" " /><span>Nombre del Addon o Textura</span></div>
+      <div class="inputBox"> <input id="desc" placeholder=" " /><span>Descripción</span></div>
+      <div class="inputBox"><input id="author" placeholder=" " /><span>Autor</span></div>
       <label>Versión:</label>
-
-      <div class="version-group">
-        <input id="v1" type="number" placeholder="1" />
-        <span>.</span>
-        <input id="v2" type="number" placeholder="0" />
-        <span>.</span>
-        <input id="v3" type="number" placeholder="0" />
-      </div>
-
+      <div class="version-group"><input id="v1" type="number" placeholder="1" /><span>.</span><input id="v2" type="number" placeholder="0" /><span>.</span><input id="v3" type="number" placeholder="0" /></div>
       <label>Min Engine Version:</label>
-
-      <div class="version-group">
-        <input id="min_v1" type="number" placeholder="1" />
-        <span>.</span>
-        <input id="min_v2" type="number" placeholder="20" />
-        <span>.</span>
-        <input id="min_v3" type="number" placeholder="80" />
-      </div>
-
-      <label>Tipo de Paquete:</label>
-      <select id="type" onchange="toggleScripts()">
-        <option value="rp">Resource Pack</option>
-        <option value="bp">Behavior Pack</option>
-      </select>
-
-      <label class="checkboxBox">
-        <input
-          type="checkbox"
-          id="useDependency"
-          onchange="toggleDependency()"
-        />
-        <span>Agregar dependencia</span>
-      </label>
-
-      <div id="dependencyInput" class="inputBox">
-        <input id="rpUUID" placeholder=" " />
-        <span>UUID de Dependencia</span>
-      </div>
-
-      <label id="scriptsContainer" class="checkboxBox">
-        <input type="checkbox" id="scripts" onchange="toggleScriptName()" />
-        <span>Agregar Scripts</span>
-      </label>
-
-      <div id="scriptNameContainer" class="inputBox">
-        <input id="scriptName" placeholder=" " />
-        <span>Nombre del script</span>
-      </div>
-
-      <label class="checkboxBox">
-        <input type="checkbox" id="useSubpacks" onchange="toggleSubpacks()" />
-        <span>Agregar Subpacks</span>
-      </label>
-
-      <div id="subpackInputs">
-        <div class="inputBox">
-          <input id="subpack1_name" placeholder=" " />
-          <span>Nombre</span>
-        </div>
-
-        <div class="inputBox">
-          <input id="subpack1_folder" placeholder=" " />
-          <span>Folder</span>
-        </div>
-
-        <div class="inputBox">
-          <input id="subpack1_memory" placeholder=" " />
-          <span>Memory Tier</span>
-        </div>
-      </div>
-
+      <div class="version-group"><input id="min_v1" type="number" placeholder="1" /><span>.</span><input id="min_v2" type="number" placeholder="20" /><span>.</span><input id="min_v3" type="number" placeholder="80" /></div>
+      <label>Tipo de Paquete:</label><select id="type" onchange="toggleScripts()"><option value="rp">Resource Pack</option><option value="bp">Behavior Pack</option></select>
+      <label class="checkboxBox"> <input type="checkbox" id="useDependency" onchange="toggleDependency()"/> <span>Agregar dependencia</span> </label>
+      <div id="dependencyInput" class="inputBox"> <input id="rpUUID" placeholder=" " /> <span>UUID de Dependencia</span> </div>
+      <label id="scriptsContainer" class="checkboxBox"><input type="checkbox" id="scripts" onchange="toggleScriptName()" /> <span>Agregar Scripts</span> </label>
+      <div id="scriptNameContainer" class="inputBox"> <input id="scriptName" placeholder=" " /> <span>Nombre del script</span></div>
+      <label class="checkboxBox"> <input type="checkbox" id="useSubpacks" onchange="toggleSubpacks()" /> <span>Agregar Subpacks</span> </label>
+      <div id="subpackInputs"> <div class="inputBox"> <input id="subpack1_name" placeholder=" " /> <span>Nombre</span> </div>
+      <div class="inputBox"> <input id="subpack1_folder" placeholder=" " /> <span>Folder</span> </div>
+      <div class="inputBox"> <input id="subpack1_memory" placeholder=" " /> <span>Memory Tier</span> </div> </div>
       <div class="actions">
       <button onclick="generate()">Generar</button>
       <button onclick="copyJSON()">Copiar JSON</button>
-      <button onclick="downloadJSON()">Descargar</button>
+      <button onclick="downloadJSON()">Descargar</button></div>
+      <textarea id="output" readonly></textarea></div>
+      <div class="about-btn" onclick="toggleAbout()">ℹ</div>
+      <div class="about-panel" id="aboutPanel">
+        <div class="about-content">
+          <h2>Acerca de</h2>
+          <p>Desarrollado por DIEGOKUGAMER541</p>
+          <div class="links">
+          <a href="https://diegokugamer541.github.io/GENERADOR-DE-QR" target="_blank">Generador de QR</a>
+          <a href="https://diegokugamer541.github.io/TEXTO-A-IMAGEN" target="_blank">Texto a imagen</a>
+          <a href="https://diegokugamer541.github.io/Categorias-twitch/" target="_blank">Categorias de Twitch</a>
+          <a href="https://bedpks.com" target="_blank">BedPKS</a>
+          <a href="https://youtube.com/@diegokugamer541" target="_blank">YouTube</a>
+          <a href="https://twitch.tv/diegokugamer541" target="_blank">Twitch</a>
+          <a href="https://discord.gg/AMCtjwVNvk"   target="_blank">Discord Minecraft</a>
+          <a href="https://github.com/DIEGOKUGAMER541" target="_blank">GitHub</a>
+          <a href="https://youtube.com/@ipodcraft" target="_blank">Youtube Ipodcraft</a>
+          <a href="https://twitch.tv/ipodcraftyt" target="_blank">Twitch IpodcraftYT</a>
+          <a href="https://ipodcraft.com" target="_blank"> Ipodcraft web</a>
+          </div>
+          <button onclick="toggleAbout()">Cerrar</button>
+        </div>
       </div>
-
-      <textarea id="output" readonly></textarea>
-    </div>
-
     <script>
       function uuid() {
         return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
@@ -580,34 +482,9 @@
       }
 
       function toggleAbout() {
-  const panel = document.getElementById("aboutPanel");
-  panel.classList.toggle("active");
-}
-    </script>
-
-<div class="about-btn" onclick="toggleAbout()">ℹ</div>
-
-<div class="about-panel" id="aboutPanel">
-  <div class="about-content">
-    <h3>Acerca de</h3>
-    <p>Desarrollado por DIEGOKUGAMER541</p>
-
-    <div class="links">
-
-    <a href="https://diegokugamer541.github.io/GENERADOR-DE-QR" target="_blank">Generador de QR</a>
-    <a href="https://bedpks.com" target="_blank">BEDPKS</a>
-    <a href="https://youtube.com/@diegokugamer541" target="_blank">YouTube</a>
-    <a href="https://twitch.tv/diegokugamer541" target="_blank">Twitch</a>
-    <a href="https://discord.gg/AMCtjwVNvk"   target="_blank">Discord Minecraft</a>
-    <a href="https://github.com/DIEGOKUGAMER541" target="_blank">GitHub</a>
-    <a href="https://youtube.com/@ipodcraft" target="_blank">Youtube Ipodcraft</a>
-    <a href="https://twitch.tv/ipodcraftyt" target="_blank">Twitch IpodcraftYT</a>
-    <a href="https://ipodcraft.com" target="_blank"> Ipodcraft web</a>
-    </div>
-
-    <button onclick="toggleAbout()">Cerrar</button>
-  </div>
-</div>
-
+      const panel = document.getElementById("aboutPanel");
+      panel.classList.toggle("active");
+    }
+  </script>
   </body>
 </html>
